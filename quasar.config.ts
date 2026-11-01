@@ -50,8 +50,8 @@ export default defineConfig((/* ctx */) => {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-      publicPath: './',
-      //publicPath: '/truco-game-web/',
+      //publicPath: './',
+      publicPath: '/ajiley-master-game/',
       // analyze: true,
       // env: {},
       // rawDefine: {}
