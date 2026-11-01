@@ -174,7 +174,8 @@
 
           <div
             v-else-if="faseJogo === 'FIN_PARTIDA'"
-            class="column items-center q-pa-xs results-table-banner win-glow-box"
+            class="column items-center q-pa-xs results-table-banner"
+            :class="totalHumano > totalIA ? 'win-glory-box' : 'win-glow-box'"
           >
             <div class="text-subtitle2 text-amber-4 text-weight-bold">👑 ¡Partida Finalizada!</div>
             <div
@@ -301,7 +302,7 @@
               • <b>Duplicar Apuesta:</b> Puedes arriesgar el doble (20 fichas por jugador) durante
               las rondas de apuestas para aumentar la tensión y las ganancias.<br />
               • <b>Fase de Descarte:</b> Tras recibir las 5 cartas, puedes seleccionar las cartas
-              que no te sirvan y cambiarlas por nuevas del mazo para mejorar tu jugada.<br />
+              que não te sirvan y cambiarlas por nuevas del mazo para mejorar tu jugada.<br />
               • <b>Rendición (Pasar):</b> Si consideras que tu mano es muy débil durante las rondas
               de apuestas, puedes retirarte de la mano para evitar perder más fichas en el pozo.<br />
               • <b>Apuestas y Pozo Acumulativo:</b> Las fichas apostadas van directamente al pozo
@@ -404,23 +405,23 @@ const criarBaralhoAjiley = () => {
 };
 
 const triggerWinEffects = () => {
-  const duration = 3.5 * 1000;
+  const duration = 4.5 * 1000;
   const end = Date.now() + duration;
 
   (function frame() {
     confetti({
-      particleCount: 15,
+      particleCount: 25,
       angle: 60,
-      spread: 70,
-      origin: { x: 0 },
-      colors: ['#ffd700', '#ff8c00', '#4caf50', '#03a9f4', '#ffffff'],
+      spread: 80,
+      origin: { x: 0, y: 0.7 },
+      colors: ['#ffd700', '#ff4500', '#00ffcc', '#ffffff', '#ff69b4'],
     });
     confetti({
-      particleCount: 15,
+      particleCount: 25,
       angle: 120,
-      spread: 70,
-      origin: { x: 1 },
-      colors: ['#ffd700', '#ff8c00', '#4caf50', '#03a9f4', '#ffffff'],
+      spread: 80,
+      origin: { x: 1, y: 0.7 },
+      colors: ['#ffd700', '#ff4500', '#00ffcc', '#ffffff', '#ff69b4'],
     });
     if (Date.now() < end) {
       requestAnimationFrame(frame);
@@ -781,7 +782,7 @@ const verificarFimPartida = () => {
   if (totalHumano.value > totalIA.value) {
     fichasHumano.value += premioPozoTotal;
     pote.value = 0;
-    finalMsg += `👑 <b>¡Felicidades! Ganaste la partida por puntos y te llevas todo el pozo acumulado (${premioPozoTotal} fichas).</b>`;
+    finalMsg += `👑 <span class="text-amber-3 text-weight-bold">¡TRIUNFO ÉPICO! Conquistaste la victoria y barriste con todo el pozo acumulado (${premioPozoTotal} fichas). ¡Eres el gran Maestro del Ajiley!</span>`;
     triggerWinEffects();
   } else if (totalHumano.value < totalIA.value) {
     fichasIA.value += premioPozoTotal;
@@ -845,7 +846,6 @@ onMounted(() => {
     0 6px 18px rgba(0, 0, 0, 0.4);
 }
 
-/* POSICIONAMIENTO RESPONSIVO SUPERIOR (Puntaje y Pozo) */
 .score-grid-box {
   position: absolute;
   top: 10px;
@@ -960,6 +960,28 @@ onMounted(() => {
   animation: winGlowPulse 1.5s infinite alternate;
 }
 
+/* EFECTO ESPECIAL DE TRIUNFO ÉPICO PARA EL HUMANO */
+.win-glory-box {
+  animation: winGloryPulse 1.2s infinite alternate;
+  background: radial-gradient(circle, rgba(20, 60, 40, 0.95) 0%, rgba(5, 20, 15, 0.95) 100%);
+  border: 3px solid #00ffcc !important;
+}
+
+@keyframes winGloryPulse {
+  0% {
+    box-shadow:
+      0 0 20px rgba(0, 255, 204, 0.6),
+      inset 0 0 15px rgba(0, 255, 204, 0.3);
+    border-color: rgba(0, 255, 204, 0.8);
+  }
+  100% {
+    box-shadow:
+      0 0 45px rgba(0, 255, 204, 1),
+      inset 0 0 25px rgba(0, 255, 204, 0.7);
+    border-color: #00ffcc;
+  }
+}
+
 @keyframes winGlowPulse {
   0% {
     box-shadow:
@@ -995,11 +1017,10 @@ onMounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-/* MEDIA QUERIES PARA ADAPTACIÓN FLUIDA EN MÓVILES (PHONES) */
 @media (max-width: 599px) {
   .game-container {
     padding: 8px !important;
-    padding-top: 45px !important; /* Espacio superior para puntaje y pozo móviles */
+    padding-top: 45px !important;
   }
 
   .score-grid-box {
