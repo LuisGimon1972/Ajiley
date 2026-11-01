@@ -1,10 +1,11 @@
 <template>
   <q-page class="flex flex-center text-white q-pa-xs ajiley-page">
     <div
-      class="game-container column items-center q-gutter-xs q-pa-md relative-position"
+      class="game-container column items-center q-gutter-xs q-pa-sm q-pa-md-md relative-position"
       style="max-width: 750px; width: 100%"
     >
-      <div class="absolute-top-left q-ma-sm score-grid-box">
+      <!-- Grade de Pontuação -->
+      <div class="score-grid-box">
         <table class="score-table">
           <thead>
             <tr>
@@ -41,15 +42,18 @@
         </table>
       </div>
 
-      <div
-        class="absolute-top-right q-ma-sm table-pot-display-top row items-center q-px-sm q-py-xs"
-      >
+      <!-- Pozo Acumulado -->
+      <div class="table-pot-display-top row items-center q-px-sm q-py-xs">
         <q-icon name="casino" color="amber-4" size="xs" class="q-mr-xs" />
         <span class="text-caption text-weight-bold text-amber-3">Pozo:</span>
         <span class="text-caption text-weight-bold text-white q-ml-xs">{{ pote }} Fichas</span>
       </div>
 
-      <div class="column items-center q-gutter-xs w-full q-px-xs" style="width: 100%">
+      <!-- Encabezado / Título y Marcador -->
+      <div
+        class="column items-center q-gutter-xs w-full q-px-xs top-header-section"
+        style="width: 100%"
+      >
         <div class="row items-center justify-between w-full q-px-sm">
           <div class="text-subtitle1 text-weight-bold text-white tracking-wide text-shadow">
             Ajiley Game Master (Poker 51)
@@ -100,6 +104,7 @@
         {{ mensagemStatus }}
       </div>
 
+      <!-- Tapete de Juego (Mesa) -->
       <div
         class="game-table-felt column items-center q-gutter-sm q-pa-sm shadow-10"
         style="width: 100%"
@@ -207,7 +212,7 @@
                     faseJogo === 'APUESTA_3') &&
                   !turnoAguardandoIA
                 "
-                class="row q-gutter-xs items-center"
+                class="row q-gutter-xs items-center justify-center action-buttons-group"
               >
                 <q-btn
                   style="border-radius: 6px"
@@ -262,7 +267,7 @@
             Tu Mano
             <span v-if="faseJogo === 'DESCARTE'">(Haz clic para cambiar)</span>
           </div>
-          <div class="row q-gutter-xs justify-center">
+          <div class="row q-gutter-xs justify-center player-cards-container">
             <div
               v-for="(carta, index) in maoHumano"
               :key="'humano-' + index"
@@ -280,7 +285,10 @@
       </div>
 
       <q-dialog v-model="mostrarRegras">
-        <q-card class="bg-dark text-white q-pa-md dialog-effect" style="max-width: 450px">
+        <q-card
+          class="bg-dark text-white q-pa-md dialog-effect"
+          style="max-width: 450px; width: 90vw"
+        >
           <q-card-section>
             <div class="text-subtitle1 text-amber-4 text-weight-bold q-mb-sm">
               Regras del Ajiley (51)
@@ -289,15 +297,21 @@
               • <b>Objetivo:</b> Sumar la mayor puntuación posible con cartas del mismo palo.<br />
               • <b>Comodín:</b> El 7 de oros actúa como comodín sumando 10 puntos al mejor palo.<br />
               • <b>Ajiley Automático:</b> Si un jugador consigue exactamente 51 puntos, canta
-              ¡Ajiley! y gana la mano de forma instantánea.<br />
+              ¡Ajiley! y gana la mano de forma instantánea con efectos especiales.<br />
               • <b>Duplicar Apuesta:</b> Puedes arriesgar el doble (20 fichas por jugador) durante
-              las rondas de apuestas.<br />
+              las rondas de apuestas para aumentar la tensión y las ganancias.<br />
+              • <b>Fase de Descarte:</b> Tras recibir las 5 cartas, puedes seleccionar las cartas
+              que no te sirvan y cambiarlas por nuevas del mazo para mejorar tu jugada.<br />
+              • <b>Rendición (Pasar):</b> Si consideras que tu mano es muy débil durante las rondas
+              de apuestas, puedes retirarte de la mano para evitar perder más fichas en el pozo.<br />
               • <b>Apuestas y Pozo Acumulativo:</b> Las fichas apostadas van directamente al pozo
-              central y se entregan al ganador de la partida.
+              central y se acumulan mano a mano sin regresar a los jugadores. El ganador absoluto de
+              la partida se lleva todo el pozo acumulado.
             </p>
           </q-card-section>
           <q-card-actions align="right">
             <q-btn
+              style="border-radius: 6px"
               color="amber-5"
               text-color="dark"
               label="Entendido"
@@ -571,7 +585,6 @@ const duplicarApuesta = () => {
     turnoAguardandoIA.value = false;
     const resAI = avaliarMaoAjiley(maoAI.value);
 
-    // Si la IA tiene menos de 30 puntos tras duplicar, se retira con mayor probabilidad por el riesgo
     const decidePassar = resAI.pontos < 30 && Math.random() < 0.6;
 
     if (decidePassar) {
@@ -809,6 +822,8 @@ onMounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  width: 95vw !important;
+  margin: 0 auto;
 }
 
 .status-banner {
@@ -830,7 +845,22 @@ onMounted(() => {
     0 6px 18px rgba(0, 0, 0, 0.4);
 }
 
+/* POSICIONAMIENTO RESPONSIVO SUPERIOR (Puntaje y Pozo) */
+.score-grid-box {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 6px;
+  padding: 4px 6px;
+  z-index: 10;
+}
+
 .table-pot-display-top {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   background: rgba(0, 0, 0, 0.75);
   border: 1px solid rgba(255, 193, 7, 0.6);
   border-radius: 6px;
@@ -856,8 +886,8 @@ onMounted(() => {
 }
 
 .table-card-back-compact {
-  width: 65px;
-  height: 85px;
+  width: 58px;
+  height: 78px;
   background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
   border-radius: 8px;
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -866,8 +896,8 @@ onMounted(() => {
 
 .player-card-compact {
   position: relative;
-  width: 72px;
-  height: 95px;
+  width: 64px;
+  height: 86px;
   background-color: #ffffff;
   border-radius: 8px;
   cursor: pointer;
@@ -912,7 +942,7 @@ onMounted(() => {
 }
 
 .action-btn {
-  width: 110px;
+  width: 105px;
   font-size: 10px;
   border-radius: 6px;
 }
@@ -945,14 +975,6 @@ onMounted(() => {
   }
 }
 
-.score-grid-box {
-  background: rgba(0, 0, 0, 0.75);
-  border: 1px solid rgba(212, 175, 55, 0.5);
-  border-radius: 6px;
-  padding: 4px 6px;
-  z-index: 10;
-}
-
 .score-table {
   font-size: 10px;
   border-collapse: collapse;
@@ -971,5 +993,50 @@ onMounted(() => {
   backdrop-filter: blur(12px);
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* MEDIA QUERIES PARA ADAPTACIÓN FLUIDA EN MÓVILES (PHONES) */
+@media (max-width: 599px) {
+  .game-container {
+    padding: 8px !important;
+    padding-top: 45px !important; /* Espacio superior para puntaje y pozo móviles */
+  }
+
+  .score-grid-box {
+    top: 6px;
+    left: 6px;
+    transform: scale(0.9);
+    transform-origin: top left;
+  }
+
+  .table-pot-display-top {
+    top: 6px;
+    right: 6px;
+    transform: scale(0.9);
+    transform-origin: top right;
+  }
+
+  .top-header-section {
+    margin-top: 15px;
+  }
+
+  .player-card-compact {
+    width: 54px;
+    height: 74px;
+  }
+
+  .table-card-back-compact {
+    width: 48px;
+    height: 64px;
+  }
+
+  .action-buttons-group {
+    gap: 4px;
+  }
+
+  .action-buttons-group .q-btn {
+    font-size: 9px !important;
+    padding: 4px 8px !important;
+  }
 }
 </style>
