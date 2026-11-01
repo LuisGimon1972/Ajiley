@@ -134,7 +134,7 @@
             >
               <img
                 v-if="faseJogo === 'SHOWDOWN' || faseJogo === 'FIN_PARTIDA' || temAjileyInstantaneo"
-                src="/images/cartasTruco.png"
+                src="images/cartasTruco.png"
                 class="atlas-img"
                 :style="getSpriteStyle(carta)"
               />
@@ -279,7 +279,7 @@
               }"
               @click="toggleSelecionarCarta(index)"
             >
-              <img src="/images/cartasTruco.png" class="atlas-img" :style="getSpriteStyle(carta)" />
+              <img src="images/cartasTruco.png" class="atlas-img" :style="getSpriteStyle(carta)" />
             </div>
           </div>
         </div>
