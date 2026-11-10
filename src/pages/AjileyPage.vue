@@ -802,6 +802,7 @@ const verificarFimPartida = () => {
 };
 
 const exitGame = () => {
+  window.close();
   router.push('/');
 };
 
